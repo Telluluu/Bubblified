@@ -85,7 +85,7 @@ namespace Gamelogic
             {
                 m_injuryTimer = 0.0f;
             }
-            if (Keyboard.current.jKey.wasPressedThisFrame && m_isCreating == false)
+            if (Input.GetKeyDown(KeyCode.J) && m_isCreating == false)
             {
                 if (m_bubble == null)
                 {
