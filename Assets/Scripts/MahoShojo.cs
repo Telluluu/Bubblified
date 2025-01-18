@@ -37,6 +37,7 @@ namespace Gamelogic
 
         public void Captured()
         {
+            m_rb.Sleep();
             isCaptured = true;
             var sp = GetComponent<SpriteRenderer>();
             sp.color = Color.red;
@@ -44,6 +45,7 @@ namespace Gamelogic
 
         public void BreakAway()
         {
+            m_rb.WakeUp();
             isCaptured = false;
             var sp = GetComponent<SpriteRenderer>();
             sp.color = Color.green;

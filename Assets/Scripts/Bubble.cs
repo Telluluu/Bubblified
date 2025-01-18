@@ -62,6 +62,7 @@ namespace Gamelogic
             if (m_capturedMahoShojo.isCaptured != true)
             {
                 m_capturedMahoShojo.Captured();
+                m_capturedMahoShojo.transform.position = transform.position;
             }
         }
     }
