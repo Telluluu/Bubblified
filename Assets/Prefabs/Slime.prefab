@@ -180,13 +180,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 384
   coyotaTime: 0.5
-  jumpBufferTime: 1
+  jumpBufferTime: 0
   gravityScaleHalved: 0.5
   gravityScaleNormal: 1
   bubblePrefab: {fileID: 3645716489777541023, guid: e9c8f6d5c87671f4fbd20b5d7d5fda14, type: 3}
   bubbleInstiateDistance: {x: 4, y: 1}
   health: 100
   invincibilityDuration: 0.5
+  injuryForce: 1
+  injuryTime: 1
   m_isGround: 0
 --- !u!95 &4302356922841692230
 Animator:
