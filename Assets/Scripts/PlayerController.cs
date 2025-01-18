@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 
 namespace Gamelogic
 {
@@ -14,9 +11,17 @@ namespace Gamelogic
         public float moveSpeed = 0.01f;
 
         public float jumpSpeed = 0.01f;
-        public float groundCheckDistance = 0.1f;
+        public float groundCheckDistance = 0.5f;
+        public float inteval = 0.5f;
         public LayerMask groundCheckLayer;
+
+        [Header("跳跃手感优化")]
         public float coyotaTime = 0.5f;
+
+        public float jumpBufferTime = 0.5f;
+        private float m_jumpBufferTimer = 0.0f;
+        public float gravityScaleHalved = 0.5f;
+        public float gravityScaleNormal = 1.0f;
 
         [Header("发射泡泡")]
         public GameObject bubblePrefab;
@@ -35,6 +40,9 @@ namespace Gamelogic
         private int lookAt;
         private int faceAt;
         private SpriteRenderer m_sr;
+
+        [Header("动画")]
+        private Animator m_animator;
 
         [SerializeField]
         private bool m_isGround;
@@ -55,24 +63,47 @@ namespace Gamelogic
             m_isJumped = false;
             EventManager.Instance.onPlayerHealthChanged.Invoke(health);
             m_lastHitTime = Time.time;
+            m_animator = GetComponent<Animator>();
         }
 
         private void FixedUpdate()
         {
             CheckGround();
+            m_jumpBufferTimer -= Time.deltaTime;
             Move();
+            AdjustGravity();
+            SetAnimation();
             if (Keyboard.current.jKey.isPressed)
             {
                 MakeBubble();
             }
         }
 
+        #region 移动
+
         private void Move()
         {
-            if (Keyboard.current.kKey.isPressed && m_isJumped == false && (m_isGround || m_coyotaTimer < coyotaTime))
+            if (Keyboard.current.kKey.isPressed)
             {
-                m_rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // 使用瞬时力量跳跃
-                m_isJumped = true;
+                if (m_isJumped == false && (m_isGround || (m_coyotaTimer < coyotaTime)))
+                {
+                    m_rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // 使用瞬时力量跳跃
+                    m_isJumped = true;
+                    m_jumpBufferTimer = 0;
+                }
+                else
+                {
+                    m_jumpBufferTimer = jumpBufferTime;
+                }
+            }
+            else if (m_jumpBufferTimer > 0)
+            {
+                if (m_isJumped == false && (m_isGround || (m_coyotaTimer < coyotaTime)))
+                {
+                    m_rb.AddForce(Vector2.up * jumpSpeed, ForceMode2D.Impulse); // 使用瞬时力量跳跃
+                    m_isJumped = true;
+                    m_jumpBufferTimer = 0;
+                }
             }
 
             // 控制水平移动
@@ -80,13 +111,29 @@ namespace Gamelogic
 
             if (Keyboard.current.aKey.isPressed)
             {
-                horizontalInput = -1f; // 向左移动
+                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.left,
+                    groundCheckDistance, groundCheckLayer);
+                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.left,
+                    groundCheckDistance, groundCheckLayer);
+                bool hit = hit1.collider == null && hit2.collider == null ? false : true;
+                if (hit == false)
+                    horizontalInput = -1f; // 向左移动
+                else
+                    horizontalInput = 0f;
                 faceAt = -1;
                 m_sr.flipX = true;
             }
             else if (Keyboard.current.dKey.isPressed)
             {
-                horizontalInput = 1f; // 向右移动
+                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.right,
+     groundCheckDistance, groundCheckLayer);
+                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.right,
+                    groundCheckDistance, groundCheckLayer);
+                bool hit = hit1.collider == null && hit2.collider == null ? false : true;
+                if (hit == false)
+                    horizontalInput = 1f; // 向右移动
+                else
+                    horizontalInput = 0f;
                 faceAt = 1;
                 m_sr.flipX = false;
             }
@@ -108,10 +155,34 @@ namespace Gamelogic
             }
         }
 
+        private void AdjustGravity()
+        {
+            if (m_isGround == true)
+                return;
+            if (m_rb.velocity.y < 0.0f)
+            {
+                m_rb.gravityScale = gravityScaleHalved;
+            }
+            else
+            {
+                m_rb.gravityScale = gravityScaleNormal;
+            }
+        }
+
         private void CheckGround()
         {
-            var hit = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundCheckLayer);
-            m_isGround = hit.collider != null ? true : false;
+            if (m_rb.velocity.y > 0f)
+            {
+                m_isGround = false;
+            }
+            else
+            {
+                var leftHit = Physics2D.Raycast((Vector2)transform.position + Vector2.left, Vector2.down, groundCheckDistance, groundCheckLayer);
+                var midHit = Physics2D.Raycast((Vector2)transform.position, Vector2.down, groundCheckDistance, groundCheckLayer);
+                var rightHit = Physics2D.Raycast((Vector2)transform.position + Vector2.right, Vector2.down, groundCheckDistance, groundCheckLayer);
+                var hit = leftHit.collider != null || rightHit.collider != null || midHit.collider != null;
+                m_isGround = hit ? true : false;
+            }
             if (m_isGround == false)
             {
                 m_coyotaTimer += Time.deltaTime;
@@ -124,6 +195,10 @@ namespace Gamelogic
             if (m_rb.velocity.magnitude < 2.0f)
                 m_isBouncing = false;
         }
+
+        #endregion 移动
+
+        #region Bubble
 
         private void MakeBubble()
         {
@@ -148,6 +223,24 @@ namespace Gamelogic
             m_rb.AddForce(dir * force, ForceMode2D.Impulse);
             m_isBouncing = true;
         }
+
+        #endregion Bubble
+
+        #region 动画
+
+        private void SetAnimation()
+        {
+            if (m_isGround == true)
+            {
+                m_animator.SetInteger("velocityY", 0);
+            }
+            else
+            {
+                m_animator.SetInteger("velocityY", (int)m_rb.velocity.y);
+            }
+        }
+
+        #endregion 动画
 
         public void TakeDamage(int damage)
         {
@@ -176,7 +269,29 @@ namespace Gamelogic
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundCheckDistance);
+
+            #region 地面检测
+
+            Vector2 leftOrigin = (Vector2)transform.position + Vector2.left * inteval;
+            Vector2 rightOrigin = (Vector2)transform.position + Vector2.right * inteval;
+            Gizmos.DrawLine(leftOrigin, leftOrigin + Vector2.down * groundCheckDistance);
+            Gizmos.DrawLine(transform.position, (Vector2)transform.position + Vector2.down * groundCheckDistance);
+            Gizmos.DrawLine(rightOrigin, rightOrigin + Vector2.down * groundCheckDistance);
+
+            #endregion 地面检测
+
+            #region 水平检测
+
+            Gizmos.DrawLine((Vector2)transform.position + Vector2.up * inteval,
+                (Vector2)transform.position + Vector2.left * groundCheckDistance + Vector2.up * inteval);
+            Gizmos.DrawLine((Vector2)transform.position + Vector2.down * inteval,
+                (Vector2)transform.position + Vector2.left * groundCheckDistance + Vector2.down * inteval);
+            Gizmos.DrawLine((Vector2)transform.position + Vector2.up * inteval,
+                (Vector2)transform.position + Vector2.right * groundCheckDistance + Vector2.up * inteval);
+            Gizmos.DrawLine((Vector2)transform.position + Vector2.down * inteval,
+                (Vector2)transform.position + Vector2.right * groundCheckDistance + Vector2.down * inteval);
+
+            #endregion 水平检测
         }
     }
 }
