@@ -27,7 +27,7 @@ namespace Gamelogic
         public GameObject bubblePrefab;
 
         public Vector2 bubbleInstiateDistance = new Vector2(2.0f, 0.8f);
-        private GameObject m_bubble;
+        private Bubble m_bubble;
 
         [Header("玩家属性")]
         [Range(0, 100)]
@@ -35,8 +35,12 @@ namespace Gamelogic
 
         public float invincibilityDuration = 0.5f;
         private float m_lastHitTime;
+        public float injuryForce = 1.0f;
 
+        public float injuryTime = 1.0f;
+        private float m_injuryTimer = 0.0f;
         private Rigidbody2D m_rb;
+
         private int lookAt;
         private int faceAt;
         private SpriteRenderer m_sr;
@@ -68,18 +72,36 @@ namespace Gamelogic
 
         private void Update()
         {
+            CheckGround();
+            m_jumpBufferTimer -= Time.deltaTime;
+            if (m_injuryTimer > 0.0f)
+            {
+                m_injuryTimer -= Time.deltaTime;
+            }
+            else
+            {
+                m_injuryTimer = 0.0f;
+            }
             if (Keyboard.current.jKey.wasPressedThisFrame)
             {
-                Debug.Log("创建泡泡");
-                m_animator.SetTrigger("Bubble");
+                if (m_bubble == null)
+                {
+                    Debug.Log("创建泡泡");
+                    m_animator.SetTrigger("Bubble");
+                }
+                else
+                {
+                    m_bubble.GetComponent<Bubble>().BubbleBurst();
+                }
             }
         }
 
         private void FixedUpdate()
         {
-            CheckGround();
-            m_jumpBufferTimer -= Time.deltaTime;
-            Move();
+            if (m_injuryTimer <= 0.0f)
+            {
+                Move();
+            }
             AdjustGravity();
             SetAnimation();
         }
@@ -122,23 +144,33 @@ namespace Gamelogic
                     groundCheckDistance, groundCheckLayer);
                 bool hit = hit1.collider == null && hit2.collider == null ? false : true;
                 if (hit == false)
+                {
                     horizontalInput = -1f; // 向左移动
+                }
                 else
+                {
+                    Debug.Log("撞到墙");
                     horizontalInput = 0f;
+                }
                 faceAt = -1;
                 m_sr.flipX = true;
             }
             else if (Keyboard.current.dKey.isPressed)
             {
                 var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.right,
-     groundCheckDistance, groundCheckLayer);
+                    groundCheckDistance, groundCheckLayer);
                 var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.right,
                     groundCheckDistance, groundCheckLayer);
                 bool hit = hit1.collider == null && hit2.collider == null ? false : true;
                 if (hit == false)
+                {
                     horizontalInput = 1f; // 向右移动
+                }
                 else
+                {
+                    Debug.Log("撞到墙");
                     horizontalInput = 0f;
+                }
                 faceAt = 1;
                 m_sr.flipX = false;
             }
@@ -208,11 +240,8 @@ namespace Gamelogic
         private void MakeBubble()
         {
             Debug.Log("Make Bubble");
-            if (m_bubble != null)
-            {
-                m_bubble.GetComponent<Bubble>().BubbleBurst();
-            }
-            m_bubble = GameObject.Instantiate(bubblePrefab);
+            m_bubble = GameObject.Instantiate(bubblePrefab).GetComponent<Bubble>();
+
             if (lookAt != 0)
             {
                 m_bubble.transform.position = (Vector2)transform.position + lookAt * Vector2.up * bubbleInstiateDistance.y;
@@ -221,13 +250,12 @@ namespace Gamelogic
             {
                 m_bubble.transform.position = (Vector2)transform.position + faceAt * Vector2.right * bubbleInstiateDistance.x;
             }
-            m_bubble.GetComponent<Bubble>().Create();
+            m_bubble.Create();
             m_animator.ResetTrigger("Bubble");
         }
 
         public void BouncedOff(Vector2 dir, float force)
         {
-            Debug.Log("BeBouncedOff:Dir = " + dir + "Force = " + force);
             m_rb.AddForce(dir * force, ForceMode2D.Impulse);
             m_isBouncing = true;
         }
@@ -244,7 +272,7 @@ namespace Gamelogic
 
         #endregion 动画
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, Vector2 pos)
         {
             if (Time.time - m_lastHitTime < invincibilityDuration)
             {
@@ -254,6 +282,10 @@ namespace Gamelogic
             {
                 m_lastHitTime = Time.time;
             }
+            Vector2 dir = (Vector2)transform.position - pos;
+            m_rb.AddForce(dir * injuryForce, ForceMode2D.Impulse);
+            m_injuryTimer = injuryTime;
+            m_animator.SetTrigger("Injury");
 
             health -= damage;
             if (health <= 0)

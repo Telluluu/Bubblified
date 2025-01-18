@@ -37,18 +37,18 @@ namespace Gamelogic
 
         public void Captured()
         {
-            m_rb.Sleep();
+            m_rb.simulated = false;
             isCaptured = true;
-            var sp = GetComponent<SpriteRenderer>();
-            sp.color = Color.red;
+            //var sp = GetComponent<SpriteRenderer>();
+            //sp.color = Color.red;
         }
 
         public void BreakAway()
         {
-            m_rb.WakeUp();
+            m_rb.simulated = true;
             isCaptured = false;
-            var sp = GetComponent<SpriteRenderer>();
-            sp.color = Color.green;
+            //var sp = GetComponent<SpriteRenderer>();
+            //sp.color = Color.green;
         }
 
         private void DetectAndChase()
@@ -112,7 +112,7 @@ namespace Gamelogic
                 return;
             if (collision.gameObject.CompareTag("Player"))
             {
-                collision.gameObject.GetComponent<PlayerController>().TakeDamage(damage);
+                collision.gameObject.GetComponent<PlayerController>().TakeDamage(damage, transform.position);
             }
         }
 

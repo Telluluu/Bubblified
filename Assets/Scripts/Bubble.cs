@@ -9,7 +9,7 @@ namespace Gamelogic
         private Rigidbody2D m_rb;
         public float pushForce = 30.0f;
         public float bounceForce = 30.0f;
-
+        private SpriteRenderer m_sr;
         private MahoShojo m_capturedMahoShojo = null;
 
         // 是否捕获到魔法少女
@@ -28,6 +28,15 @@ namespace Gamelogic
             m_status = -1;
             m_isCaptured = false;
             m_animator = GetComponent<Animator>();
+            m_sr = GetComponent<SpriteRenderer>();
+        }
+
+        private void Update()
+        {
+            if (m_isCaptured)
+            {
+                m_capturedMahoShojo.transform.position = transform.position;
+            }
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -59,6 +68,7 @@ namespace Gamelogic
         {
             m_status = 2;
             m_animator.SetInteger("status", m_status);
+            m_isCaptured = false;
         }
 
         public void DestroyThis()
@@ -92,6 +102,9 @@ namespace Gamelogic
             m_capturedMahoShojo = collision.gameObject.GetComponent<MahoShojo>();
             if (m_capturedMahoShojo.isCaptured != true)
             {
+                var color = m_sr.color;
+                color.a = 120.0f / 255.0f;
+                m_sr.color = color;
                 m_capturedMahoShojo.Captured();
                 m_capturedMahoShojo.transform.position = transform.position;
             }
