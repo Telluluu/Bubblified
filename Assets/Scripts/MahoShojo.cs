@@ -15,6 +15,7 @@ namespace Gamelogic
         public float patrolRange = 4.0f;
 
         private Rigidbody2D m_rb;
+        private SpriteRenderer m_sr;
         private Vector2 m_patrolStartPosition;
         private bool m_isChasing = false;
         private bool m_isMovingRight = false;
@@ -24,6 +25,7 @@ namespace Gamelogic
         private void Start()
         {
             m_rb = GetComponent<Rigidbody2D>();
+            m_sr = GetComponent<SpriteRenderer>();
             m_patrolStartPosition = transform.position;
         }
 
@@ -39,16 +41,12 @@ namespace Gamelogic
         {
             m_rb.simulated = false;
             isCaptured = true;
-            //var sp = GetComponent<SpriteRenderer>();
-            //sp.color = Color.red;
         }
 
         public void BreakAway()
         {
             m_rb.simulated = true;
             isCaptured = false;
-            //var sp = GetComponent<SpriteRenderer>();
-            //sp.color = Color.green;
         }
 
         private void DetectAndChase()
@@ -69,6 +67,14 @@ namespace Gamelogic
             else
             {
                 Patrol();
+            }
+            if (m_rb.velocity.x >= 0.0f)
+            {
+                m_sr.flipX = false;
+            }
+            else
+            {
+                m_sr.flipX = true;
             }
         }
 
