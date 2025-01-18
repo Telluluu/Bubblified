@@ -85,7 +85,7 @@ namespace Gamelogic
             {
                 m_injuryTimer = 0.0f;
             }
-            if (Input.GetKeyDown(KeyCode.J) && m_isCreating == false)
+            if (Keyboard.current.jKey.wasPressedThisFrame && m_isCreating == false)
             {
                 if (m_bubble == null)
                 {
@@ -220,9 +220,11 @@ namespace Gamelogic
             }
             else
             {
-                var leftHit = Physics2D.Raycast((Vector2)transform.position + Vector2.left, Vector2.down, groundCheckDistance, groundCheckLayer);
+                var leftHit = Physics2D.Raycast((Vector2)transform.position - new Vector2(m_boxCollider2D.size.x / 2, 0),
+                    Vector2.down, groundCheckDistance, groundCheckLayer);
                 var midHit = Physics2D.Raycast((Vector2)transform.position, Vector2.down, groundCheckDistance, groundCheckLayer);
-                var rightHit = Physics2D.Raycast((Vector2)transform.position + Vector2.right, Vector2.down, groundCheckDistance, groundCheckLayer);
+                var rightHit = Physics2D.Raycast((Vector2)transform.position + new Vector2(m_boxCollider2D.size.x / 2, 0),
+                    Vector2.down, groundCheckDistance, groundCheckLayer);
                 var hit = leftHit.collider != null || rightHit.collider != null || midHit.collider != null;
                 m_isGround = hit ? true : false;
             }

@@ -26588,6 +26588,10 @@ PrefabInstance:
       propertyPath: injuryForce
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 3399007013344946553, guid: af93e13ba145b3944b0af8684b133bb9, type: 3}
+      propertyPath: bubbleInstiateDistance.y
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 4126420745902373944, guid: af93e13ba145b3944b0af8684b133bb9, type: 3}
       propertyPath: m_Size.x
       value: 0.3
@@ -30102,7 +30106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4903286919879864449, guid: 753fd29c592923c40a93c715fdb6dc1b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5241660982165174602, guid: 753fd29c592923c40a93c715fdb6dc1b, type: 3}
       propertyPath: m_Size.x
