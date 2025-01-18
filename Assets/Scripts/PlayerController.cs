@@ -45,7 +45,6 @@ namespace Gamelogic
         private int lookAt;
         private int faceAt;
         private SpriteRenderer m_sr;
-        private BoxCollider2D m_boxCollider2D;
 
         [Header("动画")]
         private Animator m_animator;
@@ -70,7 +69,6 @@ namespace Gamelogic
             EventManager.Instance.onPlayerHealthChanged.Invoke(health);
             m_lastHitTime = Time.time;
             m_animator = GetComponent<Animator>();
-            m_boxCollider2D = GetComponent<BoxCollider2D>();
         }
 
         private void Update()
@@ -142,9 +140,9 @@ namespace Gamelogic
 
             if (Keyboard.current.aKey.isPressed)
             {
-                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * m_boxCollider2D.size.y / 2, Vector2.left,
+                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.left,
                     groundCheckDistance, groundCheckLayer);
-                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * m_boxCollider2D.size.y / 2, Vector2.left,
+                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.left,
                     groundCheckDistance, groundCheckLayer);
                 var hit3 = Physics2D.Raycast(transform.position, Vector2.left, horizontalInput, groundCheckLayer);
                 bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
@@ -162,9 +160,9 @@ namespace Gamelogic
             }
             else if (Keyboard.current.dKey.isPressed)
             {
-                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * m_boxCollider2D.size.y / 2, Vector2.right,
+                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.right,
                     groundCheckDistance, groundCheckLayer);
-                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * m_boxCollider2D.size.y / 2, Vector2.right,
+                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.right,
                     groundCheckDistance, groundCheckLayer);
                 var hit3 = Physics2D.Raycast(transform.position, Vector2.right, horizontalInput, groundCheckLayer);
                 bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
@@ -220,10 +218,10 @@ namespace Gamelogic
             }
             else
             {
-                var leftHit = Physics2D.Raycast((Vector2)transform.position - new Vector2(m_boxCollider2D.size.x / 2, 0),
+                var leftHit = Physics2D.Raycast((Vector2)transform.position - new Vector2(inteval, 0),
                     Vector2.down, groundCheckDistance, groundCheckLayer);
                 var midHit = Physics2D.Raycast((Vector2)transform.position, Vector2.down, groundCheckDistance, groundCheckLayer);
-                var rightHit = Physics2D.Raycast((Vector2)transform.position + new Vector2(m_boxCollider2D.size.x / 2, 0),
+                var rightHit = Physics2D.Raycast((Vector2)transform.position + new Vector2(inteval, 0),
                     Vector2.down, groundCheckDistance, groundCheckLayer);
                 var hit = leftHit.collider != null || rightHit.collider != null || midHit.collider != null;
                 m_isGround = hit ? true : false;

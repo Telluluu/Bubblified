@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2615671733911256311}
   - component: {fileID: 1368787861637499544}
-  - component: {fileID: 4126420745902373944}
+  - component: {fileID: 748339023197803331}
   - component: {fileID: 7129849275958302504}
   - component: {fileID: 3399007013344946553}
   - component: {fileID: 4302356922841692230}
@@ -88,8 +88,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &4126420745902373944
-BoxCollider2D:
+--- !u!58 &748339023197803331
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -121,18 +121,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.39, y: 0.36}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.3, y: 0.3}
-  m_EdgeRadius: 0
+  m_Radius: 0.195
 --- !u!50 &7129849275958302504
 Rigidbody2D:
   serializedVersion: 4
@@ -178,13 +168,13 @@ MonoBehaviour:
   inteval: 0.5
   groundCheckLayer:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 128
   coyotaTime: 0.5
   jumpBufferTime: 0
   gravityScaleHalved: 0.5
   gravityScaleNormal: 1
   bubblePrefab: {fileID: 3645716489777541023, guid: e9c8f6d5c87671f4fbd20b5d7d5fda14, type: 3}
-  bubbleInstiateDistance: {x: 4, y: 1}
+  bubbleInstiateDistance: {x: 4, y: 0.3}
   health: 100
   invincibilityDuration: 0.5
   injuryForce: 4

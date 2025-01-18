@@ -68,6 +68,11 @@ namespace Gamelogic
         {
             m_status = 2;
             m_animator.SetInteger("status", m_status);
+            if (m_isCaptured)
+            {
+                m_capturedMahoShojo.BreakAway();
+            }
+
             m_isCaptured = false;
         }
 
