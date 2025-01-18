@@ -22,6 +22,13 @@ namespace Gamelogic
         public float bubbleInstiateDistance = 1.5f;
         private GameObject m_bubble;
 
+        [Header("玩家属性")]
+        [Range(0, 100)]
+        public int health = 100;
+
+        public float invincibilityDuration = 0.5f;
+        private float m_lastHitTime;
+
         private Rigidbody2D m_rb;
         private int lookAt;
         private int faceAt;
@@ -37,6 +44,8 @@ namespace Gamelogic
             faceAt = 1;
             m_rb = GetComponent<Rigidbody2D>();
             m_isBouncing = false;
+            EventManager.Instance.onPlayerHealthChanged.Invoke(health);
+            m_lastHitTime = Time.time;
         }
 
         private void FixedUpdate()
@@ -112,11 +121,35 @@ namespace Gamelogic
             }
         }
 
-        public void BeBouncedOff(Vector2 dir, float force)
+        public void BouncedOff(Vector2 dir, float force)
         {
             Debug.Log("BeBouncedOff:Dir = " + dir + "Force = " + force);
             m_rb.AddForce(dir * force, ForceMode2D.Impulse);
             m_isBouncing = true;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            if (Time.time - m_lastHitTime < invincibilityDuration)
+            {
+                return;
+            }
+            else
+            {
+                m_lastHitTime = Time.time;
+            }
+
+            health -= damage;
+            if (health <= 0)
+            {
+                health = 0;
+                EventManager.Instance.onPlayerHealthChanged.Invoke(health);
+                EventManager.Instance.onPlayerDied.Invoke();
+            }
+            else
+            {
+                EventManager.Instance.onPlayerHealthChanged.Invoke(health);
+            }
         }
 
         private void OnDrawGizmos()
