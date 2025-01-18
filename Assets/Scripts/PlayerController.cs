@@ -28,6 +28,7 @@ namespace Gamelogic
 
         public Vector2 bubbleInstiateDistance = new Vector2(2.0f, 0.8f);
         private Bubble m_bubble;
+        private bool m_isCreating = false;
 
         [Header("玩家属性")]
         [Range(0, 100)]
@@ -44,6 +45,7 @@ namespace Gamelogic
         private int lookAt;
         private int faceAt;
         private SpriteRenderer m_sr;
+        private BoxCollider2D m_boxCollider2D;
 
         [Header("动画")]
         private Animator m_animator;
@@ -68,6 +70,7 @@ namespace Gamelogic
             EventManager.Instance.onPlayerHealthChanged.Invoke(health);
             m_lastHitTime = Time.time;
             m_animator = GetComponent<Animator>();
+            m_boxCollider2D = GetComponent<BoxCollider2D>();
         }
 
         private void Update()
@@ -82,8 +85,9 @@ namespace Gamelogic
             {
                 m_injuryTimer = 0.0f;
             }
-            if (Keyboard.current.jKey.wasPressedThisFrame)
+            if (Keyboard.current.jKey.wasPressedThisFrame && m_isCreating == false)
             {
+                m_isCreating = true;
                 if (m_bubble == null)
                 {
                     Debug.Log("创建泡泡");
@@ -138,11 +142,12 @@ namespace Gamelogic
 
             if (Keyboard.current.aKey.isPressed)
             {
-                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.left,
+                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * m_boxCollider2D.size.y / 2, Vector2.left,
                     groundCheckDistance, groundCheckLayer);
-                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.left,
+                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * m_boxCollider2D.size.y / 2, Vector2.left,
                     groundCheckDistance, groundCheckLayer);
-                bool hit = hit1.collider == null && hit2.collider == null ? false : true;
+                var hit3 = Physics2D.Raycast(transform.position, Vector2.left, horizontalInput, groundCheckLayer);
+                bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
                 if (hit == false)
                 {
                     horizontalInput = -1f; // 向左移动
@@ -157,11 +162,12 @@ namespace Gamelogic
             }
             else if (Keyboard.current.dKey.isPressed)
             {
-                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.right,
+                var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * m_boxCollider2D.size.y / 2, Vector2.right,
                     groundCheckDistance, groundCheckLayer);
-                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.right,
+                var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * m_boxCollider2D.size.y / 2, Vector2.right,
                     groundCheckDistance, groundCheckLayer);
-                bool hit = hit1.collider == null && hit2.collider == null ? false : true;
+                var hit3 = Physics2D.Raycast(transform.position, Vector2.right, horizontalInput, groundCheckLayer);
+                bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
                 if (hit == false)
                 {
                     horizontalInput = 1f; // 向右移动
@@ -229,7 +235,7 @@ namespace Gamelogic
                 m_coyotaTimer = 0;
                 m_isJumped = false;
             }
-            if (m_rb.velocity.magnitude < 2.0f)
+            if (m_rb.velocity.magnitude < 4.0f)
                 m_isBouncing = false;
         }
 
@@ -252,6 +258,7 @@ namespace Gamelogic
             }
             m_bubble.Create();
             m_animator.ResetTrigger("Bubble");
+            m_isCreating = false;
         }
 
         public void BouncedOff(Vector2 dir, float force)
@@ -271,6 +278,8 @@ namespace Gamelogic
         }
 
         #endregion 动画
+
+        #region 受击
 
         public void TakeDamage(int damage, Vector2 pos)
         {
@@ -299,6 +308,18 @@ namespace Gamelogic
                 EventManager.Instance.onPlayerHealthChanged.Invoke(health);
             }
         }
+
+        public void TriggerFlash()
+        {
+        }
+
+        //private IEnumerator FlashCorotine()
+        //{
+        //    float timer = 0.0f;
+        //    while(timer < flash)
+        //}
+
+        #endregion 受击
 
         private void OnDrawGizmos()
         {
