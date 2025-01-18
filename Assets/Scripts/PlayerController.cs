@@ -87,9 +87,9 @@ namespace Gamelogic
             }
             if (Keyboard.current.jKey.wasPressedThisFrame && m_isCreating == false)
             {
-                m_isCreating = true;
                 if (m_bubble == null)
                 {
+                    m_isCreating = true;
                     Debug.Log("创建泡泡");
                     m_animator.SetTrigger("Bubble");
                 }
@@ -257,7 +257,6 @@ namespace Gamelogic
                 m_bubble.transform.position = (Vector2)transform.position + faceAt * Vector2.right * bubbleInstiateDistance.x;
             }
             m_bubble.Create();
-            m_animator.ResetTrigger("Bubble");
             m_isCreating = false;
         }
 

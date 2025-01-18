@@ -6,10 +6,20 @@ namespace Gamelogic
 {
     public class Camera : MonoBehaviour
     {
-        // Update is called once per frame
+        private PlayerController m_player;
+
+        private void Start()
+        {
+            m_player = FindAnyObjectByType<PlayerController>();
+        }
+
         private void Update()
         {
-            var pos = GameManager.Instance.player.transform.position;
+            if (m_player == null)
+            {
+                m_player = FindAnyObjectByType<PlayerController>();
+            }
+            var pos = m_player.transform.position;
             pos.z = -10;
             transform.position = pos;
         }
