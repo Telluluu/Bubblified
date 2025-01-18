@@ -66,6 +66,14 @@ namespace Gamelogic
             m_animator = GetComponent<Animator>();
         }
 
+        private void Update()
+        {
+            if (Keyboard.current.jKey.wasPressedThisFrame)
+            {
+                MakeBubble();
+            }
+        }
+
         private void FixedUpdate()
         {
             CheckGround();
@@ -73,10 +81,6 @@ namespace Gamelogic
             Move();
             AdjustGravity();
             SetAnimation();
-            if (Keyboard.current.jKey.isPressed)
-            {
-                MakeBubble();
-            }
         }
 
         #region 移动
