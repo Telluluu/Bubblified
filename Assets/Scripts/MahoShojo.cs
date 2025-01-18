@@ -108,6 +108,8 @@ namespace Gamelogic
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            if (isCaptured == true)
+                return;
             if (collision.gameObject.CompareTag("Player"))
             {
                 collision.gameObject.GetComponent<PlayerController>().TakeDamage(damage);
