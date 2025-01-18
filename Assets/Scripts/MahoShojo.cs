@@ -93,11 +93,19 @@ namespace Gamelogic
 
         private void Patrol()
         {
-            float moveDirection = m_isMovingRight ? 1.0f : -1.0f;
-            m_rb.velocity = new Vector2(moveDirection * patrolSpeed, m_rb.velocity.y);
-            if (Mathf.Abs(transform.position.x - m_patrolStartPosition.x) >= patrolRange)
+            if (((Vector2)transform.position - m_patrolStartPosition).magnitude > patrolRange)
             {
-                m_isMovingRight = !m_isMovingRight;
+                Vector2 dir = m_patrolStartPosition - (Vector2)transform.position;
+                m_rb.velocity = new Vector2(dir.x * patrolSpeed, 0.0f);
+            }
+            else
+            {
+                float moveDirection = m_isMovingRight ? 1.0f : -1.0f;
+                m_rb.velocity = new Vector2(moveDirection * patrolSpeed, m_rb.velocity.y);
+                if (Mathf.Abs(transform.position.x - m_patrolStartPosition.x) >= patrolRange)
+                {
+                    m_isMovingRight = !m_isMovingRight;
+                }
             }
         }
 
