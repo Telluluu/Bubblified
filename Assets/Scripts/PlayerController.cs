@@ -26,7 +26,7 @@ namespace Gamelogic
         [Header("发射泡泡")]
         public GameObject bubblePrefab;
 
-        public float bubbleInstiateDistance = 1.5f;
+        public Vector2 bubbleInstiateDistance = new Vector2(2.0f, 0.8f);
         private GameObject m_bubble;
 
         [Header("玩家属性")]
@@ -70,7 +70,8 @@ namespace Gamelogic
         {
             if (Keyboard.current.jKey.wasPressedThisFrame)
             {
-                MakeBubble();
+                Debug.Log("创建泡泡");
+                m_animator.SetTrigger("Bubble");
             }
         }
 
@@ -206,19 +207,22 @@ namespace Gamelogic
 
         private void MakeBubble()
         {
+            Debug.Log("Make Bubble");
             if (m_bubble != null)
             {
-                Destroy(m_bubble);
+                m_bubble.GetComponent<Bubble>().BubbleBurst();
             }
             m_bubble = GameObject.Instantiate(bubblePrefab);
             if (lookAt != 0)
             {
-                m_bubble.transform.position = (Vector2)transform.position + lookAt * Vector2.up * bubbleInstiateDistance;
+                m_bubble.transform.position = (Vector2)transform.position + lookAt * Vector2.up * bubbleInstiateDistance.y;
             }
             else
             {
-                m_bubble.transform.position = (Vector2)transform.position + faceAt * Vector2.right * bubbleInstiateDistance;
+                m_bubble.transform.position = (Vector2)transform.position + faceAt * Vector2.right * bubbleInstiateDistance.x;
             }
+            m_bubble.GetComponent<Bubble>().Create();
+            m_animator.ResetTrigger("Bubble");
         }
 
         public void BouncedOff(Vector2 dir, float force)
@@ -234,14 +238,8 @@ namespace Gamelogic
 
         private void SetAnimation()
         {
-            if (m_isGround == true)
-            {
-                m_animator.SetInteger("velocityY", 0);
-            }
-            else
-            {
-                m_animator.SetInteger("velocityY", (int)m_rb.velocity.y);
-            }
+            m_animator.SetInteger("velocityY", (int)m_rb.velocity.y);
+            m_animator.SetBool("isGround", m_isGround);
         }
 
         #endregion 动画

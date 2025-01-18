@@ -12,15 +12,22 @@ namespace Gamelogic
 
         private MahoShojo m_capturedMahoShojo = null;
 
+        // 是否捕获到魔法少女
+        private bool m_isCaptured = false;
+
         /// <summary>
-        /// 0表示未捕获魔法少女的泡泡 1表示已捕获魔法少女的泡泡
+        /// 动画状态，0表示创建，1表示idle，2表示破裂
         /// </summary>
         private int m_status = 0;
+
+        private Animator m_animator;
 
         private void OnEnable()
         {
             m_rb = GetComponent<Rigidbody2D>();
-            m_status = 0;
+            m_status = -1;
+            m_isCaptured = false;
+            m_animator = GetComponent<Animator>();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -35,28 +42,52 @@ namespace Gamelogic
             }
         }
 
+        public void Create()
+        {
+            m_status = 0;
+            m_animator.SetInteger("status", m_status);
+            Debug.Log("SetInteget status = 0");
+        }
+
+        public void Idle()
+        {
+            m_status = 1;
+            m_animator.SetInteger("status", m_status);
+        }
+
+        public void BubbleBurst()
+        {
+            m_status = 2;
+            m_animator.SetInteger("status", m_status);
+        }
+
+        public void DestroyThis()
+        {
+            Destroy(gameObject);
+        }
+
         private void InteractWithPlayer(Collision2D collision)
         {
-            if (m_status == 0)
+            if (m_isCaptured == false)
             {
                 Vector2 dir = transform.position - collision.collider.transform.position;
                 if (m_rb == null)
                     m_rb = GetComponent<Rigidbody2D>();
                 m_rb.AddForce(dir * pushForce, ForceMode2D.Impulse);
             }
-            else if (m_status == 1)
+            else if (m_isCaptured == true)
             {
                 Destroy(m_capturedMahoShojo.gameObject);
 
                 Vector2 dir = collision.collider.transform.position - transform.position;
                 collision.gameObject.GetComponent<PlayerController>().BouncedOff(dir, bounceForce);
-                Destroy(this.gameObject);
+                BubbleBurst();
             }
         }
 
         private void InteractWithMahoShojo(Collision2D collision)
         {
-            m_status = 1;
+            m_isCaptured = true;
             m_rb.velocity = Vector2.zero;
             m_capturedMahoShojo = collision.gameObject.GetComponent<MahoShojo>();
             if (m_capturedMahoShojo.isCaptured != true)
