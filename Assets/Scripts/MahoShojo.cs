@@ -39,15 +39,23 @@ namespace Gamelogic
 
         public void Captured()
         {
+            Debug.Log("Captured");
             m_rb.simulated = false;
             isCaptured = true;
         }
 
         public void BreakAway()
         {
+            Debug.Log("BreakAway");
+
             m_rb.simulated = true;
+
             isCaptured = false;
+            Debug.Log(m_rb.simulated);
+            Debug.Log(isCaptured);
         }
+
+        #region 巡逻逻辑
 
         private void DetectAndChase()
         {
@@ -93,19 +101,26 @@ namespace Gamelogic
 
         private void Patrol()
         {
-            if (((Vector2)transform.position - m_patrolStartPosition).magnitude > patrolRange)
+            if (((Vector2)transform.position - m_patrolStartPosition).magnitude > patrolRange + 2.0f)
             {
                 Vector2 dir = m_patrolStartPosition - (Vector2)transform.position;
-                m_rb.velocity = new Vector2(dir.x * patrolSpeed, 0.0f);
+                m_rb.velocity = new Vector2(dir.x * patrolSpeed, m_rb.velocity.y);
             }
             else
             {
-                float moveDirection = m_isMovingRight ? 1.0f : -1.0f;
-                m_rb.velocity = new Vector2(moveDirection * patrolSpeed, m_rb.velocity.y);
-                if (Mathf.Abs(transform.position.x - m_patrolStartPosition.x) >= patrolRange)
+                // 获取当前位置和起始巡逻位置的距离
+                float distanceFromStart = ((Vector2)transform.position - m_patrolStartPosition).magnitude;
+
+                // 检查是否超出巡逻范围
+                if (distanceFromStart >= patrolRange)
                 {
+                    // 如果超出巡逻范围，反转移动方向
                     m_isMovingRight = !m_isMovingRight;
                 }
+
+                // 根据当前移动方向设置速度
+                float moveDirection = m_isMovingRight ? 1.0f : -1.0f;
+                m_rb.velocity = new Vector2(moveDirection * patrolSpeed, m_rb.velocity.y);
             }
         }
 
@@ -119,6 +134,8 @@ namespace Gamelogic
                 m_rb.velocity = new Vector2(dir2Player.x * chaseSpeed, m_rb.velocity.y);
             }
         }
+
+        #endregion 巡逻逻辑
 
         private void OnCollisionEnter2D(Collision2D collision)
         {

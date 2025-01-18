@@ -35,7 +35,10 @@ namespace Gamelogic
         {
             if (m_isCaptured)
             {
-                m_capturedMahoShojo.transform.position = transform.position;
+                if (m_capturedMahoShojo != null)
+                {
+                    m_capturedMahoShojo.transform.position = transform.position;
+                }
             }
         }
 
@@ -55,7 +58,6 @@ namespace Gamelogic
         {
             m_status = 0;
             m_animator.SetInteger("status", m_status);
-            Debug.Log("SetInteget status = 0");
         }
 
         public void Idle()
@@ -68,17 +70,21 @@ namespace Gamelogic
         {
             m_status = 2;
             m_animator.SetInteger("status", m_status);
-            if (m_isCaptured)
-            {
-                m_capturedMahoShojo.BreakAway();
-            }
-
-            m_isCaptured = false;
         }
 
         public void DestroyThis()
         {
             Destroy(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            if (m_isCaptured)
+            {
+                m_capturedMahoShojo?.BreakAway();
+            }
+
+            m_isCaptured = false;
         }
 
         private void InteractWithPlayer(Collision2D collision)
@@ -97,6 +103,7 @@ namespace Gamelogic
                 Vector2 dir = collision.collider.transform.position - transform.position;
                 collision.gameObject.GetComponent<PlayerController>().BouncedOff(dir, bounceForce);
                 BubbleBurst();
+                m_isCaptured = false;
             }
         }
 
@@ -112,6 +119,7 @@ namespace Gamelogic
                 m_sr.color = color;
                 m_capturedMahoShojo.Captured();
                 m_capturedMahoShojo.transform.position = transform.position;
+                m_rb.velocity = Vector2.zero;
             }
         }
     }

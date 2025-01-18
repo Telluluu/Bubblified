@@ -88,7 +88,6 @@ namespace Gamelogic
                 if (m_bubble == null)
                 {
                     m_isCreating = true;
-                    Debug.Log("创建泡泡");
                     m_animator.SetTrigger("Bubble");
                 }
                 else
@@ -245,7 +244,6 @@ namespace Gamelogic
 
         private void MakeBubble()
         {
-            Debug.Log("Make Bubble");
             m_bubble = GameObject.Instantiate(bubblePrefab).GetComponent<Bubble>();
 
             if (lookAt != 0)
