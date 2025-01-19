@@ -30,6 +30,7 @@ namespace Gamelogic
         public Vector2 bubbleInstiateDistance = new Vector2(2.0f, 0.8f);
         private Bubble m_bubble;
         private bool m_isCreating = false;
+        public float verticalBounceForceCoef = 1.5f;
 
         [Header("玩家属性")]
         [Range(0, 100)]
@@ -280,7 +281,7 @@ namespace Gamelogic
             m_rb.AddForce(dir * force, ForceMode2D.Impulse);
             if (m_rb.velocity.y > jumpSpeed * 1.2f)
             {
-                m_rb.velocity = new Vector2(m_rb.velocity.x, jumpSpeed * 1.2f);
+                m_rb.velocity = new Vector2(m_rb.velocity.x, jumpSpeed * verticalBounceForceCoef);
             }
             m_isBouncing = true;
         }
