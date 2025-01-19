@@ -20,12 +20,14 @@ namespace Gamelogic
         private bool m_isChasing = false;
         private bool m_isMovingRight = false;
 
+        private Animator m_animator;
         public bool isCaptured = false;
 
         private void Start()
         {
             m_rb = GetComponent<Rigidbody2D>();
             m_sr = GetComponent<SpriteRenderer>();
+            m_animator = GetComponent<Animator>();
             m_patrolStartPosition = transform.position;
         }
 
@@ -41,15 +43,16 @@ namespace Gamelogic
         {
             m_rb.simulated = false;
             isCaptured = true;
+            m_animator.SetBool("isCaptured", isCaptured);
         }
 
         public void BreakAway()
         {
-            m_rb.simulated = true;
+            if (m_rb != null)
+                m_rb.simulated = true;
 
             isCaptured = false;
-            Debug.Log(m_rb.simulated);
-            Debug.Log(isCaptured);
+            m_animator.SetBool("isCaptured", isCaptured);
         }
 
         #region 巡逻逻辑

@@ -168,6 +168,7 @@ MonoBehaviour:
   detectionRange: 7
   patrolRange: 4
   isCaptured: 0
+  capturedSprite: {fileID: 21300000, guid: 329bbc0048330a3459f3b2d7e6ce9ba2, type: 3}
 --- !u!95 &3944954972613721363
 Animator:
   serializedVersion: 5
