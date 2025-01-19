@@ -14,6 +14,7 @@ namespace Gamelogic
         public float groundCheckDistance = 0.5f;
         public float inteval = 0.5f;
         public LayerMask groundCheckLayer;
+        public LayerMask groundLayer;
 
         [Header("跳跃手感优化")]
         public float coyotaTime = 0.5f;
@@ -143,7 +144,7 @@ namespace Gamelogic
                     groundCheckDistance, groundCheckLayer);
                 var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.left,
                     groundCheckDistance, groundCheckLayer);
-                var hit3 = Physics2D.Raycast(transform.position, Vector2.left, horizontalInput, groundCheckLayer);
+                var hit3 = Physics2D.Raycast(transform.position, Vector2.left, horizontalInput, groundLayer);
                 bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
                 if (hit == false)
                 {
@@ -163,7 +164,7 @@ namespace Gamelogic
                     groundCheckDistance, groundCheckLayer);
                 var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.right,
                     groundCheckDistance, groundCheckLayer);
-                var hit3 = Physics2D.Raycast(transform.position, Vector2.right, horizontalInput, groundCheckLayer);
+                var hit3 = Physics2D.Raycast(transform.position, Vector2.right, horizontalInput, groundLayer);
                 bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
                 if (hit == false)
                 {
