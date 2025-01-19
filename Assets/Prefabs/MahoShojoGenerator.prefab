@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b95365ffc60bc974390d5c6bcd3b858b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 8163193836461562320, guid: 753fd29c592923c40a93c715fdb6dc1b, type: 3}
   damage: 20
   patrolSpeed: 1
   chaseSpeed: 1
