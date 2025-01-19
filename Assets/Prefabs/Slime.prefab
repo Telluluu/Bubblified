@@ -168,6 +168,9 @@ MonoBehaviour:
   inteval: 0.5
   groundCheckLayer:
     serializedVersion: 2
+    m_Bits: 384
+  groundLayer:
+    serializedVersion: 2
     m_Bits: 128
   coyotaTime: 0.5
   jumpBufferTime: 0
@@ -180,6 +183,7 @@ MonoBehaviour:
   injuryForce: 4
   injuryTime: 1
   m_isGround: 0
+  bounceDuration: 1
 --- !u!95 &4302356922841692230
 Animator:
   serializedVersion: 5

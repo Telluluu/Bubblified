@@ -39,15 +39,12 @@ namespace Gamelogic
 
         public void Captured()
         {
-            Debug.Log("Captured");
             m_rb.simulated = false;
             isCaptured = true;
         }
 
         public void BreakAway()
         {
-            Debug.Log("BreakAway");
-
             m_rb.simulated = true;
 
             isCaptured = false;

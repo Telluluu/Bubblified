@@ -233,6 +233,11 @@ namespace Gamelogic
                 var rightHit = Physics2D.Raycast((Vector2)transform.position + new Vector2(inteval, 0),
                     Vector2.down, groundCheckDistance, groundCheckLayer);
                 var hit = leftHit.collider != null || rightHit.collider != null || midHit.collider != null;
+
+                if (Keyboard.current.gKey.isPressed)
+                {
+                    Debug.Log("Hit:" + midHit.collider.name);
+                }
                 m_isGround = hit ? true : false;
             }
             if (m_isGround == false)
