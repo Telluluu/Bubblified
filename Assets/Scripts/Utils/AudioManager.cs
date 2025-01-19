@@ -78,7 +78,8 @@ namespace Audio
             {
                 if (audioType.soundName == name)
                 {
-                    audioType.source.PlayOneShot(audioType.clip);
+                    if (!audioType.source.isPlaying)
+                        audioType.source.PlayOneShot(audioType.clip);
                     return;
                 }
             }
