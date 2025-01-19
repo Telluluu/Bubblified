@@ -326,6 +326,11 @@ namespace Gamelogic
             {
                 EventManager.Instance.onPlayerHealthChanged.Invoke(health);
             }
+            if (m_isCreating)
+            {
+                m_isCreating = false;
+                m_bubble?.BubbleBurst();
+            }
         }
 
         public void TriggerFlash()
