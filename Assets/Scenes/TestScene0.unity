@@ -26559,9 +26559,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3399007013344946553, guid: af93e13ba145b3944b0af8684b133bb9, type: 3}
-      propertyPath: groundCheckLayer.m_Bits
+      propertyPath: groundLayer.m_Bits
       value: 128
       objectReference: {fileID: 0}
+    - target: {fileID: 3399007013344946553, guid: af93e13ba145b3944b0af8684b133bb9, type: 3}
+      propertyPath: groundCheckLayer.m_Bits
+      value: 384
+      objectReference: {fileID: 0}
+    - target: {fileID: 7129849275958302504, guid: af93e13ba145b3944b0af8684b133bb9, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: 91955f482d74a7c4f8f024f2289ae86d, type: 2}
     - target: {fileID: 8588416158615261592, guid: af93e13ba145b3944b0af8684b133bb9, type: 3}
       propertyPath: m_Name
       value: Slime

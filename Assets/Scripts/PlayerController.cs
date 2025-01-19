@@ -58,6 +58,9 @@ namespace Gamelogic
         private bool m_isJumped = false;
 
         private bool m_isBouncing;
+        public float bounceDuration = 1.0f;
+        private float m_lastBounceTime;
+        private float m_bounceTimer;
 
         private void Start()
         {
@@ -141,9 +144,9 @@ namespace Gamelogic
             if (Keyboard.current.aKey.isPressed)
             {
                 var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.left,
-                    groundCheckDistance, groundCheckLayer);
+                    groundCheckDistance, groundLayer);
                 var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.left,
-                    groundCheckDistance, groundCheckLayer);
+                    groundCheckDistance, groundLayer);
                 var hit3 = Physics2D.Raycast(transform.position, Vector2.left, horizontalInput, groundLayer);
                 bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
                 if (hit == false)
@@ -161,9 +164,9 @@ namespace Gamelogic
             else if (Keyboard.current.dKey.isPressed)
             {
                 var hit1 = Physics2D.Raycast((Vector2)transform.position + Vector2.up * inteval, Vector2.right,
-                    groundCheckDistance, groundCheckLayer);
+                    groundCheckDistance, groundLayer);
                 var hit2 = Physics2D.Raycast((Vector2)transform.position + Vector2.down * inteval, Vector2.right,
-                    groundCheckDistance, groundCheckLayer);
+                    groundCheckDistance, groundLayer);
                 var hit3 = Physics2D.Raycast(transform.position, Vector2.right, horizontalInput, groundLayer);
                 bool hit = hit1.collider != null || hit2.collider != null || hit3.collider != null;
                 if (hit == false)
@@ -179,8 +182,14 @@ namespace Gamelogic
                 m_sr.flipX = false;
             }
             // 平滑地调整水平速度
-            if (m_isBouncing == false)
+            if (m_isBouncing == false || Time.time - m_lastBounceTime < bounceDuration)
+            {
                 m_rb.velocity = new Vector2(horizontalInput * moveSpeed, m_rb.velocity.y);
+            }
+            else
+            {
+                m_bounceTimer += Time.fixedDeltaTime;
+            }
 
             if (Keyboard.current.wKey.isPressed == true)
             {
@@ -262,6 +271,10 @@ namespace Gamelogic
         public void BouncedOff(Vector2 dir, float force)
         {
             m_rb.AddForce(dir * force, ForceMode2D.Impulse);
+            if (m_rb.velocity.y > jumpSpeed * 1.2f)
+            {
+                m_rb.velocity = new Vector2(m_rb.velocity.x, jumpSpeed * 1.2f);
+            }
             m_isBouncing = true;
         }
 
