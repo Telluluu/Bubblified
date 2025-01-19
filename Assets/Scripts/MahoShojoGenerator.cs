@@ -7,7 +7,7 @@ namespace Gamelogic
 {
     public class MahoShojoGenerator : MonoBehaviour
     {
-        public MahoShojo prefab;
+        public GameObject prefab;
         private MahoShojo m_mahoShojo;
 
         public int damage = 20;
@@ -16,6 +16,9 @@ namespace Gamelogic
         public float chaseSpeed = 1.5f;
         public float detectionRange = 5.0f;
         public float patrolRange = 4.0f;
+
+        public float spawnTime = 5.0f;
+        private float timer = 0.0f;
 
         private void Start()
         {
@@ -30,12 +33,20 @@ namespace Gamelogic
         {
             if (m_mahoShojo == null)
             {
-                m_mahoShojo = Instantiate(prefab, transform.position, Quaternion.identity).GetComponent<MahoShojo>();
-                m_mahoShojo.patrolSpeed = patrolSpeed;
-                m_mahoShojo.chaseSpeed = chaseSpeed;
-                m_mahoShojo.detectionRange = detectionRange;
-                m_mahoShojo.patrolRange = patrolRange;
-                m_mahoShojo.damage = damage;
+                if (timer > spawnTime)
+                {
+                    m_mahoShojo = Instantiate(prefab, transform.position, Quaternion.identity).GetComponent<MahoShojo>();
+                    m_mahoShojo.patrolSpeed = patrolSpeed;
+                    m_mahoShojo.chaseSpeed = chaseSpeed;
+                    m_mahoShojo.detectionRange = detectionRange;
+                    m_mahoShojo.patrolRange = patrolRange;
+                    m_mahoShojo.damage = damage;
+                    timer = 0.0f;
+                }
+                else
+                {
+                    timer += Time.deltaTime;
+                }
             }
         }
 
