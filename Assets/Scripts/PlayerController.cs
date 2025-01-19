@@ -92,11 +92,13 @@ namespace Gamelogic
                 if (m_bubble == null)
                 {
                     m_isCreating = true;
+                    Audio.AudioManager.Instance.PlayFX("create");
                     m_animator.SetTrigger("Bubble");
                 }
                 else
                 {
-                    m_bubble.GetComponent<Bubble>().BubbleBurst();
+                    Audio.AudioManager.Instance.PlayFX("burst");
+                    m_bubble.BubbleBurst();
                 }
             }
         }

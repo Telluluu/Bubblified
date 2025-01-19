@@ -58,7 +58,6 @@ namespace Gamelogic
         {
             m_status = 0;
             m_animator.SetInteger("status", m_status);
-            Audio.AudioManager.Instance.PlayFX("create");
         }
 
         public void Idle()
@@ -71,7 +70,6 @@ namespace Gamelogic
         {
             m_status = 2;
             m_animator.SetInteger("status", m_status);
-            Audio.AudioManager.Instance.PlayFX("burst");
         }
 
         public void DestroyThis()
