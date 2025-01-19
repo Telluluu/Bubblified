@@ -68,6 +68,7 @@ namespace Gamelogic
 
         public void BubbleBurst()
         {
+            Audio.AudioManager.Instance.PlayFX("burst");
             m_status = 2;
             m_animator.SetInteger("status", m_status);
         }

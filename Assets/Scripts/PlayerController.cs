@@ -97,7 +97,7 @@ namespace Gamelogic
                 }
                 else
                 {
-                    Audio.AudioManager.Instance.PlayFX("burst");
+                    //Audio.AudioManager.Instance.PlayFX("burst");
                     m_bubble.BubbleBurst();
                 }
             }

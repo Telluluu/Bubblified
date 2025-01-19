@@ -104,6 +104,7 @@ namespace Gamelogic
             if (((Vector2)transform.position - m_patrolStartPosition).magnitude > patrolRange + 2.0f)
             {
                 Vector2 dir = m_patrolStartPosition - (Vector2)transform.position;
+                dir.Normalize();
                 m_rb.velocity = new Vector2(dir.x * patrolSpeed, m_rb.velocity.y);
             }
             else
@@ -131,6 +132,7 @@ namespace Gamelogic
             if (player != null)
             {
                 Vector2 dir2Player = player.transform.position - transform.position;
+                dir2Player.Normalize();
                 m_rb.velocity = new Vector2(dir2Player.x * chaseSpeed, m_rb.velocity.y);
             }
         }
